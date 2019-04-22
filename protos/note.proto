@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package com.cit.micro.note;
+option java_multiple_files = true;
+
+message Note {
+    string id = 1;
+    string text = 2;
+}
+
+message Id{
+    string id = 1;
+}
+
+message Result{
+    bool success = 1;
+}
+
+service Notation{
+    rpc add(stream Note) returns(Id);
+    rpc delete(Id) returns(Result);
+    rpc get(Id) returns(stream Note);
+    rpc update(stream Note) returns(Id);
+}

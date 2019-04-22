@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package com.cit.micro.analysis;
+option java_multiple_files = true;
+
+message LogData {
+    string uid = 1;
+    string text = 2;
+    int32 id = 3;
+}
+
+message Id{
+    int32 id = 1;
+}
+
+message Result{
+    bool success = 1;
+}
+
+message Uid{
+    string uid = 1;
+}
+
+service Analyse{
+    rpc getAll(Id) returns(stream LogData);
+    rpc delete(Id) returns(Result);
+    rpc getSystemLogs(Uid) returns(stream LogData);
+}
