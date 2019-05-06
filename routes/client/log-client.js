@@ -26,6 +26,7 @@ let client = new analysisProto.com.cit.micro.logger.Logger(
 );
 
 exports.info = function (message) {
+    console.log(message);
     client.info({timeStamp: Date.getTime, serviceName: SERVICE_NAME, message: message}, function (err, response) {
         if (err) {
             console.log(err);
