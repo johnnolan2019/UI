@@ -31,7 +31,10 @@ exports.getUidLogsCall = function(req, res){
     console.log(id);
     let call = client.getSystemLogs({uid:id});
     call.on('data', onData);
-    call.on('error', onError);
+    call.on('error', function (err) {
+        res.status(500);
+        res.send(err.toString())
+    });
     call.read();
     call.on('end', function () {
         res.status(200);
@@ -44,13 +47,17 @@ exports.getAllCall = function (id, req, res) {
     resultData.length = 0;
     let call = client.getAll({Id: id});
     call.on('data', onData);
-    call.on('error', onError);
+    call.on('error', function (err) {
+        res.status(500);
+        res.send(err.toString())
+    });
     call.read();
     call.on('end', function () {
         res.status(200);
         res.write(JSON.stringify(resultData));
         res.end();
     });
+
 };
 
 exports.deleteCall = function (req, res) {
@@ -58,7 +65,8 @@ exports.deleteCall = function (req, res) {
     client.delete(req.body, function (err, response) {
         if (err) {
             console.log(err);
-            res.status(err.toString());
+            res.status(500);
+            res.send(err.toString());
         } else {
             logger.info('Success from delete:');
             res.status(200);
@@ -81,8 +89,4 @@ function onData(message) {
         resultData.push(message)
     }
 
-}
-
-function onError(message) {
-    console.log(message)
 }

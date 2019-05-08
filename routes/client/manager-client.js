@@ -28,7 +28,10 @@ let resultData = [];
 exports.getUid = function (id, req, res) {
     let call = client.getUid({Id: id});
     call.on('data', onData);
-    call.on('error', onError);
+    call.on('error', function (err) {
+        res.status(500);
+        res.send(err.toString())
+    });
     call.read();
     call.on('end', function () {
         res.status(200);
@@ -46,6 +49,8 @@ exports.subscribeNew = function (req, res) {
     client.subscribeNew({channel:channel, uid: uid}, function(err, response){
         if (err) {
             console.log(err);
+            res.status(500);
+            res.send(err.toString());
         } else {
             console.log(response.text);
             console.log("This worked??");
@@ -57,7 +62,7 @@ exports.subscribeNew = function (req, res) {
 
 function onData(message) {
     let found = false;
-    for(var i = 0; i < resultData.length; i++) {
+    for(let i = 0; i < resultData.length; i++) {
         if (resultData[i].uid === message.uid) {
             found = true;
             break;
@@ -66,8 +71,4 @@ function onData(message) {
     if (!found){
         resultData.push(message)
     }
-}
-
-function onError(message) {
-    console.log(message)
 }

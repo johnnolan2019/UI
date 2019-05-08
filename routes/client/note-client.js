@@ -34,6 +34,8 @@ exports.add = function (req, res) {
     client.add({pointer:parseInt(id), text: note}, function(err, response){
         if (err) {
             console.log(err);
+            res.status(500);
+            res.send(err.toString());
         } else {
             console.log(response.text);
             console.log("This worked??");
@@ -49,7 +51,10 @@ exports.get = function (req, res) {
     resultData.length = 0;
     let call = client.get({id: id});
     call.on('data', onData);
-    call.on('error', onError);
+    call.on('error', function (err) {
+        res.status(500);
+        res.send(err.toString())
+    });
     call.read();
     call.on('end', function () {
         res.status(200);
@@ -63,8 +68,4 @@ exports.get = function (req, res) {
 function onData(message) {
     console.log(`${message.pointer}: ${message.text}`);
     resultData.push(message.text);
-}
-
-function onError(message) {
-    console.log(message)
 }

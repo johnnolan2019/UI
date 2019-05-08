@@ -50,17 +50,9 @@ exports.debug = function (message) {
     client.debug({timeStamp: Date.getTime, serviceName: SERVICE_NAME, message: message}, function (err, response) {
         if (err) {
             console.log(err);
+
         } else {
             console.log(response.result);
         }
     });
 };
-
-//When server send a message
-function onData(message) {
-    console.log(`${message.uid}: ${message.text}`);
-}
-
-function onError(message) {
-    console.log(message)
-}
