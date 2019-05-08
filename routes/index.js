@@ -4,6 +4,7 @@ const path = require('path');
 const analysisClient = require('./client/analysis-client');
 const managerClient = require('./client/manager-client');
 const appLog = require('./client/log-client');
+const noteClient = require('./client/note-client');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -25,6 +26,13 @@ router.get("/getUid", function(req, res, next) {
 router.post("/subscribe", function(req, res, next) {
     appLog.info("attempting to add new subscription to db");
     managerClient.subscribeNew(req, res);
+    res.status(200);
+});
+
+router.post("/addNote", function(req, res, next) {
+    appLog.info("attempting to a new note");
+    console.log(req.body);
+    noteClient.add(req, res);
     res.status(200);
 });
 

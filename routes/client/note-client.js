@@ -21,11 +21,12 @@ let analysisProto = grpc.loadPackageDefinition(
 let client = new analysisProto.com.cit.micro.note.Notation(
     REMOTE_SERVER,
     grpc.credentials.createInsecure(),
-    logger.info('Creating connection to Analysis service')
+    logger.info('Creating connection to Note service')
 );
 
-exports.add = function (note) {
-    call = client.add({Note: note});
+exports.add = function (note, req, res) {
+    console.log("in here");
+    let call = client.add({Note: note});
     call.on('data', onData);
     call.on('error', onError);
     call.write(note);

@@ -17,8 +17,8 @@ message Result{
 }
 
 service Notation{
-    rpc add(stream Note) returns(Id);
+    rpc add(Note) returns(Id);
     rpc delete(Id) returns(Result);
-    rpc get(Id) returns(stream Note);
-    rpc update(stream Note) returns(Id);
+    rpc get(Id) returns(Note);
+    rpc update(Note) returns(Id);
 }

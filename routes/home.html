@@ -3,58 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <style>
-        body {font-family: Arial;}
-
-        /* Style the tab */
-        .tab {
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: #f1f1f1;
-        }
-
-        /* Style the buttons inside the tab */
-        .tab button {
-            background-color: inherit;
-            float: left;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-            font-size: 17px;
-        }
-
-        /* Change background color of buttons on hover */
-        .tab button:hover {
-            background-color: #ddd;
-        }
-
-        /* Create an active/current tablink class */
-        .tab button.active {
-            background-color: #ccc;
-        }
-
-        /* Style the tab content */
-        .tabcontent {
-            display: none;
-            padding: 6px 12px;
-            -webkit-animation: fadeEffect 1s;
-            animation: fadeEffect 1s;
-        }
-
-        /* Fade in tabs */
-        @-webkit-keyframes fadeEffect {
-            from {opacity: 0;}
-            to {opacity: 1;}
-        }
-
-        @keyframes fadeEffect {
-            from {opacity: 0;}
-            to {opacity: 1;}
-        }
-    </style>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<!--    <link rel="stylesheet" type="text/css" href="stylesheets/style.css">-->
 </head>
+<style>
+    body {
+        padding: 50px;
+        font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    }
+
+    a {
+        color: #00B7FF;
+    }
+    /* Style the tab */
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+
+    /* Style the buttons that are used to open the tab content */
+    .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+    }
+
+    /* Change background color of buttons on hover */
+    .tab button:hover {
+        background-color: #ddd;
+    }
+
+    /* Create an active/current tablink class */
+    .tab button.active {
+        background-color: #ccc;
+    }
+
+    /* Style the tab content */
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+
+    .menu
+    {
+        width: 150px;
+        box-shadow: 3px 3px 5px #888888;
+        border-style: solid;
+        border-width: 1px;
+        border-color: grey;
+        border-radius: 2px;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        position: fixed;
+        display: none;
+    }
+
+    .menu-item
+    {
+        height: 20px;
+    }
+
+    .menu-item:hover
+    {
+        background-color: #6CB5FF;
+        cursor: pointer;
+    }
+
+    body {font-family: Arial;}
+
+    /* Style the tab */
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+
+    /* Style the buttons inside the tab */
+    .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+    }
+
+    /* Change background color of buttons on hover */
+    .tab button:hover {
+        background-color: #ddd;
+    }
+
+    /* Create an active/current tablink class */
+    .tab button.active {
+        background-color: #ccc;
+    }
+
+    /* Style the tab content */
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        -webkit-animation: fadeEffect 1s;
+        animation: fadeEffect 1s;
+    }
+
+    /* Fade in tabs */
+    @-webkit-keyframes fadeEffect {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+
+    @keyframes fadeEffect {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+</style>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script type="text/javascript" language="javascript">
     let logHeaders = ["UID", "Text"];
@@ -77,28 +150,65 @@
     }
 
     function displayLog(data) {
+        hideAll();
+        $("#data").show();
         data = JSON.parse(data);
-        let out = "<h2>Logs</h2><table border=1 width=100%>";
+
+        let out = "<h2>Logs</h2><table id='logTable' border=1 width=100%>";
+        out += "<tbody class=\"context-menu-one\">";
+
         let i;
         out += '<tr style="font-size: 20px;" >';
         for (i = 0; i < logHeaders.length; i++) {
             out += '<th >' + logHeaders[i] + '</th>';
         }
         out += "</tr>";
-
         for (i = 0; i < data.length; i++) {
-            out += "<tr>";
+            out += "<tr oncontextmenu='clickTableId(this)'>";
+            out += '<td style="display:none;">' + data[i].id + '</td>';
             out += '<td >' + data[i].uid + '</td>';
             out += '<td >' + data[i].text + '</td>';
             out += "</tr>";
         }
-
-        out += "</table>";
+        out += "</tbody>\n</table>";
         out += "<br>";
         out += "</table>";
+        out+= "<div class=\"menu\"><div class=\"menu-item\" onclick=\"showModal()\">Add Note</div> " +
+            "<div class=\"menu-item\" onclick=\"showNotes()\">Show Notes</div>" +
+            "<div class=\"menu-item\" onclick=\"getUidLogs()\">Get this UID</div>" +
+            "</div>";
         document.getElementById("data").innerHTML = out;
-        hideAll();
-        $("#data").show();
+        customMenu();
+    }
+
+    function clickTableId(tableRow) {
+        document.getElementById("noteObj").elements["idNum"].value = tableRow.childNodes[0].innerHTML;
+    }
+
+    function customMenu(){
+        let menuDisplayed = false;
+        let menuBox = null;
+
+        window.addEventListener("contextmenu", function() {
+            if ($("#data").is(':visible')){
+                let left = arguments[0].clientX;
+                let top = arguments[0].clientY;
+
+                menuBox = window.document.querySelector(".menu");
+                menuBox.style.left = left + "px";
+                menuBox.style.top = top + "px";
+                menuBox.style.display = "block";
+
+                arguments[0].preventDefault();
+
+                menuDisplayed = true;}
+        }, false);
+
+        window.addEventListener("click", function() {
+            if(menuDisplayed === true){
+                menuBox.style.display = "none";
+            }
+        }, true);
     }
 
     function getUid(){
@@ -142,6 +252,7 @@
         $("#add").hide();
         $("#data").hide();
         $("#uid").hide();
+        customMenu();
     }
 
     function listUid(){
@@ -192,7 +303,39 @@
 
         });
     });
+    
+    function showModal() {
+        document.getElementById('id01').style.display='block'
+    }
 
+    function showNotes() {
+        console.log("Notes");
+    }
+
+    function addNote(){
+        document.getElementById('id01').style.display="none";
+        let noteText = document.getElementById('note').value;
+        let id = document.getElementById("noteObj").elements["idNum"].value;
+        let obj = {'id': id, 'note': noteText};
+        console.log(obj);
+        body = JSON.stringify(obj);
+        $.ajax({
+            type: "POST",
+            contentType: 'application/json',
+            data: body,
+            url: "/addNote",
+            success: [function (data) {
+                console.log("Success");
+            }],
+            error: [function () {
+                console.log("Error");
+            }]
+        });
+    }
+
+    function getUidLogs() {
+        console.log("need to do this")
+    }
 </script>
 <body >
 <!-- Tab links -->
@@ -218,12 +361,27 @@
             <input type="submit">
         </form>
     </div>
-    <!--<div class="menu">
-        <ul class="menu-options">
-            <li class="menu-option">Add Note</li>
-        </ul>
-    </div>-->
-
+    <div id="id01" class="w3-modal w3-animate-opacity">
+        <div class="w3-modal-content w3-card-4">
+            <header class="w3-container w3-grey">
+            <span onclick="document.getElementById('id01').style.display='none'"
+                  class="w3-button w3-large w3-display-topright">&times;</span>
+                <h2>Enter your note here</h2>
+            </header>
+            <div class="w3-container">
+                <label>
+                    <textarea id="note" style="width:100%"></textarea>
+                </label>
+                <input type="submit" name="Submit" onclick="addNote()" value="Submit">
+            </div>
+        </div>
+    </div>
+    <div>
+        <form id="noteObj">
+            <input type="hidden" name="idNum" >
+            <input type="hidden" name="noteText" >
+        </form>
+    </div>
 </body>
 
 </html>
