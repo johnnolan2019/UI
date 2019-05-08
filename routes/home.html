@@ -133,7 +133,7 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script type="text/javascript" language="javascript">
     let logHeaders = ["UID", "Text"];
-    let uidHeaders = ["UID"];
+    let uidHeaders = ["UID's being tracked"];
 
     $(document).ready(function () {
         hideAll();
@@ -165,7 +165,7 @@
         }
         out += "</tr>";
         for (i = 0; i < data.length; i++) {
-            out += "<tr oncontextmenu='clickTableId(this)'>";
+            out += "<tr id='logTableRow' oncontextmenu='clickTableId(this)'>";
             out += '<td style="display:none;">' + data[i].id + '</td>';
             out += '<td >' + data[i].uid + '</td>';
             out += '<td >' + data[i].text + '</td>';
@@ -174,7 +174,8 @@
         out += "</tbody>\n</table>";
         out += "<br>";
         out += "</table>";
-        out+= "<div class=\"menu\"><div class=\"menu-item\" onclick=\"showModal()\">Add Note</div> " +
+        out+= "<div class=\"menu\">" +
+            "<div class=\"menu-item\" onclick=\"showModal('id01')\">Add Note</div> " +
             "<div class=\"menu-item\" onclick=\"showNotes()\">Show Notes</div>" +
             "<hr>" +
             "<div class=\"menu-item\" onclick=\"deleteEntry()\">Delete Entry</div>" +
@@ -195,7 +196,8 @@
             contentType: 'application/json',
             url: "/removeLog",
             success: [function (data) {
-                console.log("Success");
+                window.confirm("Deleted the Item");
+                getLogs();
             }],
             error: [function () {
                 console.log("Error");
@@ -211,9 +213,9 @@
     function customMenu(){
         let menuDisplayed = false;
         let menuBox = null;
-
-        window.addEventListener("contextmenu", function() {
-            if ($("#data").is(':visible')){
+        if ($("#data").is(':visible')){
+            document.getElementById('logTable').addEventListener("contextmenu", function(e) {
+            {
                 let left = arguments[0].clientX;
                 let top = arguments[0].clientY;
 
@@ -232,7 +234,12 @@
                 menuBox.style.display = "none";
             }
         }, true);
-    }
+        window.addEventListener("contextmenu", function() {
+            if(menuDisplayed === true){
+                menuBox.style.display = "none";
+            }
+        }, true);
+    }}
 
     function getUid(){
         $.ajax({
@@ -248,7 +255,7 @@
 
     function displayUid(data){
         data = JSON.parse(data);
-        let out = "<h2>Logs</h2><table border=1 width=100%>";
+        let out = "<h2>Systems</h2><table border=1 width=100%>";
         let i;
         out += '<tr style="font-size: 20px;" >';
         for (i = 0; i < uidHeaders.length; i++) {
@@ -326,8 +333,8 @@
         });
     });
     
-    function showModal() {
-        document.getElementById('id01').style.display='block'
+    function showModal(modalName) {
+        document.getElementById(modalName).style.display='block'
     }
 
     function showNotes() {
@@ -343,10 +350,10 @@
                 let resData = JSON.parse(data);
                 if (resData.length > 0){
                     document.getElementById("noteData").innerHTML = resData.toString();
-                    document.getElementById("id02").style.display="block";
+                    showModal("id02");
                 }else{
                     document.getElementById("noteData").innerHTML = "No Note Data Available For Entry";
-                    document.getElementById("id02").style.display="block";
+                    showModal("id02");
                 }
             }],
             data: body,
