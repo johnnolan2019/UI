@@ -18,23 +18,51 @@ let analysisProto = grpc.loadPackageDefinition(
     })
 );
 
+let resultData = [];
+
 let client = new analysisProto.com.cit.micro.note.Notation(
     REMOTE_SERVER,
     grpc.credentials.createInsecure(),
     logger.info('Creating connection to Note service')
 );
 
-exports.add = function (note, req, res) {
-    console.log("in here");
-    let call = client.add({Note: note});
+exports.add = function (req, res) {
+    console.log(req.body.id);
+    console.log(req.body.note);
+    let id = req.body.id;
+    let note = req.body.note;
+    client.add({pointer:parseInt(id), text: note}, function(err, response){
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(response.text);
+            console.log("This worked??");
+            res.status(200);
+            res.end();
+        }
+    });
+};
+
+exports.get = function (req, res) {
+    let id = req.body.id;
+    console.log(id);
+    resultData.length = 0;
+    let call = client.get({id: id});
     call.on('data', onData);
     call.on('error', onError);
-    call.write(note);
+    call.read();
+    call.on('end', function () {
+        res.status(200);
+        res.write(JSON.stringify(resultData));
+        res.end();
+        //call.close();
+    });
 };
 
 //When server send a message
 function onData(message) {
-    console.log(`${message.uid}: ${message.text}`);
+    console.log(`${message.pointer}: ${message.text}`);
+    resultData.push(message.text);
 }
 
 function onError(message) {

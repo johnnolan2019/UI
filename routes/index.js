@@ -14,26 +14,35 @@ router.get('/', function(req, res, next) {
 router.get("/getAll", function(req, res, next) {
     appLog.info("attempting to get all values from server");
     analysisClient.getAllCall(12, req, res);
-    res.status(200);
+});
+
+router.post("/getUidLogs", function(req, res, next) {
+    appLog.info("attempting to get all values from server for single UID");
+    analysisClient.getUidLogsCall(req, res);
 });
 
 router.get("/getUid", function(req, res, next) {
     appLog.info("attempting to get UID values from server");
     managerClient.getUid(12, req, res);
-    res.status(200);
 });
 
 router.post("/subscribe", function(req, res, next) {
     appLog.info("attempting to add new subscription to db");
     managerClient.subscribeNew(req, res);
-    res.status(200);
 });
 
 router.post("/addNote", function(req, res, next) {
     appLog.info("attempting to a new note");
-    console.log(req.body);
     noteClient.add(req, res);
-    res.status(200);
+});
+
+router.post("/getNote", function (req, res, next) {
+    appLog.info("attempting to a get a note");
+    noteClient.get(req, res);
+});
+
+router.delete("/removeLog", function (req, res) {
+    analysisClient.deleteCall(req, res)
 });
 
 module.exports = router;

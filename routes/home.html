@@ -65,11 +65,13 @@
         padding-bottom: 3px;
         position: fixed;
         display: none;
+
     }
 
     .menu-item
     {
         height: 20px;
+
     }
 
     .menu-item:hover
@@ -138,7 +140,6 @@
     });
     function getLogs(){
         $.ajax({
-
             url: "/getAll",
             success: [function (data) {
                 displayLog(data);
@@ -175,14 +176,36 @@
         out += "</table>";
         out+= "<div class=\"menu\"><div class=\"menu-item\" onclick=\"showModal()\">Add Note</div> " +
             "<div class=\"menu-item\" onclick=\"showNotes()\">Show Notes</div>" +
+            "<hr>" +
+            "<div class=\"menu-item\" onclick=\"deleteEntry()\">Delete Entry</div>" +
             "<div class=\"menu-item\" onclick=\"getUidLogs()\">Get this UID</div>" +
             "</div>";
         document.getElementById("data").innerHTML = out;
         customMenu();
     }
 
+    function deleteEntry(){
+        let id = document.getElementById("noteObj").elements["idNum"].value;
+        let obj = {id: id};
+        let body = JSON.stringify(obj);
+        console.log(body);
+        $.ajax({
+            type: "DELETE",
+            data: body,
+            contentType: 'application/json',
+            url: "/removeLog",
+            success: [function (data) {
+                console.log("Success");
+            }],
+            error: [function () {
+                console.log("Error");
+            }]
+        });
+    }
+
     function clickTableId(tableRow) {
         document.getElementById("noteObj").elements["idNum"].value = tableRow.childNodes[0].innerHTML;
+        document.getElementById("noteObj").elements["uid"].value = tableRow.childNodes[1].innerHTML;
     }
 
     function customMenu(){
@@ -213,7 +236,6 @@
 
     function getUid(){
         $.ajax({
-
             url: "/getUid",
             success: [function (data) {
                 displayUid(data);
@@ -309,7 +331,29 @@
     }
 
     function showNotes() {
-        console.log("Notes");
+        let id = document.getElementById("noteObj").elements["idNum"].value;
+        console.log(id);
+        let body = {id:id};
+        //let body = JSON.stringify(id);
+        console.log(body);
+        $.ajax({
+            type: "POST",
+            url: "/getNote",
+            success: [function (data) {
+                let resData = JSON.parse(data);
+                if (resData.length > 0){
+                    document.getElementById("noteData").innerHTML = resData.toString();
+                    document.getElementById("id02").style.display="block";
+                }else{
+                    document.getElementById("noteData").innerHTML = "No Note Data Available For Entry";
+                    document.getElementById("id02").style.display="block";
+                }
+            }],
+            data: body,
+            error: [function () {
+                console.log("Error");
+            }]
+        });
     }
 
     function addNote(){
@@ -334,7 +378,22 @@
     }
 
     function getUidLogs() {
-        console.log("need to do this")
+        let uid = document.getElementById("noteObj").elements["uid"].value;
+        let obj = {'uid': uid};
+        console.log(obj);
+        body = JSON.stringify(obj);
+        $.ajax({
+            type: "POST",
+            contentType: 'application/json',
+            data: body,
+            url: "/getUidLogs",
+            success: [function (data) {
+                displayLog(data);
+            }],
+            error: [function () {
+                console.log("Error");
+            }]
+        });
     }
 </script>
 <body >
@@ -376,9 +435,24 @@
             </div>
         </div>
     </div>
+    <div id="id02" class="w3-modal w3-animate-opacity">
+        <div class="w3-modal-content w3-card-4">
+            <header class="w3-container w3-grey">
+                <span onclick="document.getElementById('id02').style.display='none'"
+                      class="w3-button w3-large w3-display-topright">&times;</span>
+                <h2>Note Data From DataBase</h2>
+            </header>
+            <div class="w3-container">
+                <label>
+                    <p id="noteData" style="width:100%"></p>
+                </label>
+            </div>
+        </div>
+    </div>
     <div>
         <form id="noteObj">
             <input type="hidden" name="idNum" >
+            <input type="hidden" name="uid" >
             <input type="hidden" name="noteText" >
         </form>
     </div>

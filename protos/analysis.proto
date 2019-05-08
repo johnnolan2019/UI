@@ -21,8 +21,8 @@ message Uid{
     string uid = 1;
 }
 
-service Analyse{
+service Analyze{
     rpc getAll(Id) returns(stream LogData);
-    rpc delete(Id) returns(Result);
     rpc getSystemLogs(Uid) returns(stream LogData);
+    rpc delete(Id) returns(Result);
 }

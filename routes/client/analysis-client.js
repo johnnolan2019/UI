@@ -6,7 +6,6 @@ let express = require("express");
 const REMOTE_SERVER = "127.0.0.1:6567";
 const ANALYSIS_PROTO = __dirname + "/../../protos/analysis.proto";
 
-
 //Load the protobuf
 let analysisProto = grpc.loadPackageDefinition(
     protoLoader.loadSync(ANALYSIS_PROTO, {
@@ -20,13 +19,29 @@ let analysisProto = grpc.loadPackageDefinition(
 
 let resultData = [];
 
-let client = new analysisProto.com.cit.micro.analysis.Analyse(
+let client = new analysisProto.com.cit.micro.analysis.Analyze(
     REMOTE_SERVER,
     grpc.credentials.createInsecure(),
     logger.info('Creating connection to Analysis service')
 );
 
+exports.getUidLogsCall = function(req, res){
+    resultData.length = 0;
+    let id = req.body.uid;
+    console.log(id);
+    let call = client.getSystemLogs({uid:id});
+    call.on('data', onData);
+    call.on('error', onError);
+    call.read();
+    call.on('end', function () {
+        res.status(200);
+        res.write(JSON.stringify(resultData));
+        res.end();
+    });
+};
+
 exports.getAllCall = function (id, req, res) {
+    resultData.length = 0;
     let call = client.getAll({Id: id});
     call.on('data', onData);
     call.on('error', onError);
@@ -36,7 +51,20 @@ exports.getAllCall = function (id, req, res) {
         res.write(JSON.stringify(resultData));
         res.end();
     });
+};
 
+exports.deleteCall = function (req, res) {
+    console.log(req.body);
+    client.delete(req.body, function (err, response) {
+        if (err) {
+            console.log(err);
+            res.status(err.toString());
+        } else {
+            logger.info('Success from delete:');
+            res.status(200);
+            res.send("OK");
+        }
+    });
 };
 
 //When server send a message

@@ -4,8 +4,9 @@ package com.cit.micro.note;
 option java_multiple_files = true;
 
 message Note {
-    string id = 1;
+    int32 pointer = 1;
     string text = 2;
+    int32 id = 3;
 }
 
 message Id{
@@ -19,6 +20,6 @@ message Result{
 service Notation{
     rpc add(Note) returns(Id);
     rpc delete(Id) returns(Result);
-    rpc get(Id) returns(Note);
+    rpc get(Id) returns(stream Note);
     rpc update(Note) returns(Id);
 }
