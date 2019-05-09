@@ -5,7 +5,7 @@ let  app = express();
 // todo dynamically find this
 const REMOTE_SERVER = "127.0.0.1:6565";
 const LOG_PROTO = __dirname + "/../../protos/logger.proto";
-const SERVICE_NAME = "UI";
+const SERVICE_NAME = "UI_Service";
 
 
 //Load the protobuf
