@@ -20,7 +20,7 @@ let managerProto = grpc.loadPackageDefinition(
 let client = new managerProto.com.cit.micro.manager.AccessManager(
     REMOTE_SERVER,
     grpc.credentials.createInsecure(),
-    logger.info('Creating connection to Analysis service')
+    logger.info('Creating connection to Manager service')
 );
 
 let resultData = [];

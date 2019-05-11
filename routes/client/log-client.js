@@ -22,13 +22,16 @@ let analysisProto = grpc.loadPackageDefinition(
 let client = new analysisProto.com.cit.micro.logger.Logger(
     REMOTE_SERVER,
     // todo set secure server
-    grpc.credentials.createInsecure()
+    grpc.credentials.createInsecure(),
+    console.info('Creating connection to Logger service')
 );
 
 exports.info = function (message) {
+    console.log("Attempting to write to log");
     console.log(message);
     client.info({timeStamp: Date.getTime, serviceName: SERVICE_NAME, message: message}, function (err, response) {
         if (err) {
+            console.log("Failed to talk to logger service");
             console.log(err);
         } else {
             console.log(response.result);
@@ -39,6 +42,7 @@ exports.info = function (message) {
 exports.error = function (message) {
     client.error({timeStamp: Date.getTime, serviceName: SERVICE_NAME, message: message}, function (err, response) {
         if (err) {
+            console.log("Failed to talk to logger service");
             console.log(err);
         } else {
             console.log(response.result);
@@ -49,8 +53,8 @@ exports.error = function (message) {
 exports.debug = function (message) {
     client.debug({timeStamp: Date.getTime, serviceName: SERVICE_NAME, message: message}, function (err, response) {
         if (err) {
+            console.log("Failed to talk to logger service");
             console.log(err);
-
         } else {
             console.log(response.result);
         }
