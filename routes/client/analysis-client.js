@@ -3,7 +3,7 @@ let protoLoader = require("@grpc/proto-loader/build/src/index");
 let logger = require('./log-client');
 let express = require("express");
 // todo dynamically find this
-const REMOTE_SERVER = "127.0.0.1:6567";
+const REMOTE_SERVER = "analysis-service:6567";
 const ANALYSIS_PROTO = __dirname + "/../../protos/analysis.proto";
 
 //Load the protobuf
