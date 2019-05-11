@@ -3,7 +3,7 @@ let protoLoader = require("@grpc/proto-loader/build/src/index");
 let express = require("express");
 let  app = express();
 // todo dynamically find this
-const REMOTE_SERVER = "micro-service";
+const REMOTE_SERVER = "logger-service:6565";
 const LOG_PROTO = __dirname + "/../../protos/logger.proto";
 const SERVICE_NAME = "UI_Service";
 
